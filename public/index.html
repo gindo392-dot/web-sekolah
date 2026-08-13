@@ -1,0 +1,107 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portal Kelas Online</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Arial;background:#f5f7fb;color:#172033}header{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;padding:22px}.wrap{max-width:1150px;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:15px}.brand h1{margin:0}.brand p{margin:4px 0;opacity:.85}nav{background:#fff;border-bottom:1px solid #e5e7eb;display:flex;overflow:auto}nav button{padding:14px 17px;border:0;background:#fff;font-weight:800;color:#596273;cursor:pointer;white-space:nowrap}nav button.active{color:#2563eb;border-bottom:3px solid #2563eb}main{padding:22px}.view{display:none}.view.active{display:block}.card{background:#fff;border:1px solid #e5e7eb;border-radius:17px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #1720330a}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.stat{background:#fff;border:1px solid #e5e7eb;border-radius:15px;padding:18px}.stat small{color:#6b7280}.stat b{display:block;font-size:28px;margin-top:5px}button{cursor:pointer}.action{border:0;border-radius:10px;padding:10px 13px;font-weight:800}.primary{background:#2563eb;color:#fff}.secondary{background:#eef2ff;color:#3730a3}.danger{background:#fee2e2;color:#991b1b}.success{background:#dcfce7;color:#166534}.toolbar,.actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}input,textarea,select{font:inherit;border:1px solid #dfe3ea;border-radius:10px;padding:10px 12px;width:100%}.toolbar input{max-width:500px}.list{display:grid;gap:11px}.item{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:15px}.muted{color:#6b7280;font-size:14px}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:800}.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2563eb,#7c3aed);padding:20px}.loginbox{background:#fff;padding:30px;border-radius:20px;width:min(410px,100%);box-shadow:0 25px 70px #0004}.loginbox h1{text-align:center}.form{display:grid;gap:12px}.form label{font-size:13px;font-weight:800}.error{display:none;background:#fee2e2;color:#991b1b;padding:10px;border-radius:10px}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modalbox{background:#fff;border-radius:18px;padding:22px;width:min(560px,100%);max-height:90vh;overflow:auto}.profile{display:grid;grid-template-columns:250px 1fr;gap:35px;align-items:center}.avatar{width:210px;height:210px;border-radius:50%;object-fit:cover;margin:auto;display:flex;align-items:center;justify-content:center;background:#ede9fe;font-size:70px;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.prow{padding:15px 0;border-bottom:1px solid #e5e7eb}.prow:last-child{border:0}.loginDemo{margin-top:15px;padding:12px;background:#f3f4f6;border-radius:10px;font-size:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}.profile{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+</style></head><body>
+<div id="login" class="login"><div class="loginbox"><h1>🎓 Portal Kelas</h1><p style="text-align:center;color:#6b7280">Login Guru & Siswa</p><form class="form" onsubmit="login(event)"><label>Username<input id="u" required></label><label>Password<input id="p" type="password" required></label><div id="err" class="error"></div><button class="action primary">🔐 Login</button></form><div class="loginDemo">Demo: Guru <b>guru/guru123</b> • Siswa <b>siswa/siswa123</b></div></div></div>
+<div id="app" style="display:none"><header><div class="wrap top"><div class="brand"><h1>🎓 Portal Kelas</h1><p>Materi • Tugas • Pengumpulan • Perpustakaan</p></div><div class="actions"><button class="action secondary" onclick="profile()">👤 Profil</button><button class="action danger" onclick="logout()">Keluar</button></div></div></header>
+<nav class="wrap"><button class="active" onclick="tab(this,'home')">🏠 Beranda</button><button onclick="tab(this,'materials')">📚 Materi</button><button onclick="tab(this,'tasks')">📝 Tugas</button><button id="subtab" onclick="tab(this,'subs')">📤 Pengumpulan</button><button onclick="tab(this,'books')">📖 Perpustakaan</button><button id="studenttab" onclick="tab(this,'students')">👥 Siswa</button></nav>
+<main class="wrap">
+<section id="home" class="view active"><div class="grid"><div class="stat"><small>Materi</small><b id="cm">0</b></div><div class="stat"><small>Tugas</small><b id="ct">0</b></div><div class="stat"><small>Pengumpulan</small><b id="cs">0</b></div></div><div class="card" style="margin-top:16px"><h2>Selamat datang 👋</h2><p class="muted" id="welcome"></p></div></section>
+<section id="materials" class="view"><div class="toolbar"><input id="mq" placeholder="Cari materi..." oninput="renderMaterials()"><button id="addm" class="action primary" onclick="materialForm()">＋ Tambah Materi</button></div><div id="ml" class="list"></div></section>
+<section id="tasks" class="view"><div class="toolbar"><input id="tq" placeholder="Cari tugas..." oninput="renderTasks()"><button id="addt" class="action primary" onclick="taskForm()">＋ Buat Tugas</button></div><div id="tl" class="list"></div></section>
+<section id="subs" class="view"><div class="card"><h2>📤 Pengumpulan</h2><div id="sl" class="list"></div></div></section>
+<section id="students" class="view"><div class="toolbar"><input id="sq" placeholder="Cari siswa..." oninput="renderStudents()"><button id="adds" class="action primary" onclick="studentForm()">＋ Buat Akun Siswa</button></div><div id="studentlist" class="list"></div></section>
+<section id="books" class="view"><div class="toolbar"><input id="bq" placeholder="Cari buku..." oninput="renderBooks()"><button id="addb" class="action primary" onclick="bookForm()">＋ Tambah Buku</button></div><div id="bl" class="list"></div></section>
+</main></div>
+<div id="modal" class="modal"><div class="modalbox" id="mc"></div></div>
+<script>
+let me=null, materials=[], tasks=[], subs=[], books=[], students=[];
+const $=id=>document.getElementById(id);
+async function api(url,opt={}){const r=await fetch(url,opt);let d={};try{d=await r.json()}catch{}if(!r.ok)throw Error(d.error||"Terjadi kesalahan");return d}
+async function init(){try{me=(await api("/api/me")).user;if(me)showApp();}catch{}}
+async function login(e){e.preventDefault();try{me=(await api("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:$("u").value,password:$("p").value})})).user;showApp()}catch(x){$("err").style.display="block";$("err").textContent=x.message}}
+async function logout(){await api("/api/logout",{method:"POST"});location.reload()}
+function showApp(){$("login").style.display="none";$("app").style.display="block";$("welcome").textContent="Halo, "+(me.name||me.username)+"!";$("addm").style.display=me.role==="guru"?"":"none";$("addt").style.display=me.role==="guru"?"":"none";$("addb").style.display=me.role==="guru"?"":"none";$("studenttab").style.display=me.role==="guru"?"":"none";load()}
+function tab(btn,id){document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");load()}
+async function load(){
+  const submissionEndpoint = me.role==="guru" ? "/api/submissions" : "/api/my-submissions";
+  const requests=[api("/api/materials"),api("/api/tasks"),api(submissionEndpoint),api("/api/books")];
+  if(me.role==="guru") requests.push(api("/api/students"));
+  const result=await Promise.all(requests);
+  [materials,tasks,subs,books]=result;
+  students=me.role==="guru" ? (result[4]||[]) : [];$("cm").textContent=materials.length;$("ct").textContent=tasks.length;$("cs").textContent=subs.length;renderMaterials();renderTasks();renderSubs();renderBooks()}
+function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderMaterials(){let q=($("mq").value||"").toLowerCase();$("ml").innerHTML=materials.filter(x=>(x.title+" "+x.subject+" "+x.description).toLowerCase().includes(q)).map(x=>`<div class="item"><span class="badge">${esc(x.subject)}</span><h3>${esc(x.title)}</h3><p class="muted">${esc(x.description)}</p><p>${esc(x.content)}</p>${x.file_path?`<a class="action success" href="${x.file_path}" download="${esc(x.file_name)}">⬇️ Download ${esc(x.file_name)}</a>`:""}${me.role==="guru"?`<button class="action danger" onclick="del('/api/materials/${x.id}')">Hapus</button>`:""}</div>`).join("")||"<div class='card'>Belum ada materi.</div>"}
+function renderTasks(){let q=($("tq").value||"").toLowerCase();$("tl").innerHTML=tasks.filter(x=>(x.title+" "+x.subject+" "+x.description).toLowerCase().includes(q)).map(x=>`<div class="item"><span class="badge">${esc(x.subject)}</span><h3>${esc(x.title)}</h3><div class="muted">Deadline: ${esc(x.deadline||"-")}</div><p>${esc(x.description)}</p>${me.role==="siswa"?`<button class="action primary" onclick="submitForm(${x.id})">📤 Kirim Tugas</button>`:""}${me.role==="guru"?`<button class="action danger" onclick="del('/api/tasks/${x.id}')">Hapus</button>`:""}</div>`).join("")||"<div class='card'>Belum ada tugas.</div>"}
+function renderSubs(){
+ if(me.role==="guru"){
+   $("sl").innerHTML=subs.map(x=>`<div class="item"><b>${esc(x.student_name||"-")}</b> • ${esc(x.task_title)}<div class="muted">${esc(x.created_at)}</div><p>${esc(x.answer)}</p>${x.file_path?`<a href="${x.file_path}" download="${esc(x.file_name)}">⬇️ ${esc(x.file_name)}</a>`:""}</div>`).join("")||"<div class='muted'>Belum ada pengumpulan siswa.</div>";
+ }else{
+   $("sl").innerHTML=subs.map(x=>`<div class="item"><b>${esc(x.task_title)}</b><div class="muted">Dikirim: ${esc(x.created_at)}</div><p>${esc(x.answer)}</p>${x.file_path?`<a href="${x.file_path}" download="${esc(x.file_name)}">⬇️ ${esc(x.file_name)}</a>`:""}</div>`).join("")||"<div class='muted'>Belum ada tugas yang kamu kirim.</div>";
+ }
+}
+function renderStudents(){
+ let q=($("sq").value||"").toLowerCase();
+ $("studentlist").innerHTML=students.filter(x=>(x.name+" "+x.username).toLowerCase().includes(q)).map(x=>`<div class="item"><span class="badge">Siswa</span><h3>👤 ${esc(x.name||"-")}</h3><div class="muted">Username: <b>${esc(x.username)}</b></div><div class="actions" style="margin-top:10px"><button class="action secondary" onclick="editStudent(${x.id})">✏️ Edit</button><button class="action danger" onclick="deleteStudent(${x.id})">🗑️ Hapus</button></div></div>`).join("")||"<div class='card'>Belum ada akun siswa.</div>";
+}
+
+function renderBooks(){$("bl").innerHTML=books.map(x=>`<div class="item"><span class="badge">${esc(x.category)}</span><h3>📖 ${esc(x.title)}</h3><div class="muted">${esc(x.author)}</div>${x.url?`<p><a href="${esc(x.url)}" target="_blank" rel="noopener">🔗 Buka buku</a></p>`:""}${me.role==="guru"?`<button class="action danger" onclick="del('/api/books/${x.id}')">Hapus</button>`:""}</div>`).join("")||"<div class='card'>Belum ada buku.</div>"}
+function openModal(h){$("mc").innerHTML=h;$("modal").classList.add("open")}function closeModal(){$("modal").classList.remove("open")}$("modal").onclick=e=>{if(e.target.id==="modal")closeModal()}
+function materialForm(){if(me?.role!=="guru")return alert("Akses hanya untuk Guru.");openModal(`<h2>Tambah Materi</h2><form class="form" id="mf" onsubmit="saveMaterial(event)"><label>Judul<input name="title" required></label><label>Mata Pelajaran<input name="subject" required></label><label>Deskripsi<input name="description"></label><label>Isi Materi<textarea name="content" rows="7"></textarea></label><label>File (maks. 5 MB)<input name="file" type="file"></label><button class="action primary">Simpan</button></form>`)}
+async function saveMaterial(e){e.preventDefault();try{await api("/api/materials",{method:"POST",body:new FormData(e.target)});closeModal();load()}catch(x){alert(x.message)}}
+function taskForm(){if(me?.role!=="guru")return alert("Akses hanya untuk Guru.");openModal(`<h2>Buat Tugas</h2><form class="form" onsubmit="saveTask(event)"><label>Judul<input name="title" required></label><label>Mata Pelajaran<input name="subject" required></label><label>Deadline<input name="deadline" type="date"></label><label>Instruksi<textarea name="description" rows="6"></textarea></label><button class="action primary">Buat Tugas</button></form>`)}
+async function saveTask(e){e.preventDefault();try{let f=new FormData(e.target);await api("/api/tasks",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(f))});closeModal();load()}catch(x){alert(x.message)}}
+function submitForm(id){openModal(`<h2>📤 Kirim Tugas</h2><form class="form" onsubmit="saveSub(event,${id})"><label>Jawaban<textarea name="answer" rows="8" required></textarea></label><label>File tugas (maks. 5 MB)<input name="file" type="file"></label><button class="action primary">Kirim</button></form>`)}
+async function saveSub(e,id){e.preventDefault();let f=new FormData(e.target);f.append("task_id",id);try{await api("/api/submissions",{method:"POST",body:f});closeModal();load();alert("Tugas berhasil dikirim.")}catch(x){alert(x.message)}}
+function bookForm(){if(me?.role!=="guru")return alert("Akses hanya untuk Guru.");openModal(`<h2>Tambah Buku</h2><form class="form" onsubmit="saveBook(event)"><label>Judul<input name="title" required></label><label>Penulis/Sumber<input name="author"></label><label>Kategori<input name="category"></label><label>URL buku (opsional)<input name="url" placeholder="https://..."></label><button class="action primary">Simpan</button></form>`)}
+async function saveBook(e){e.preventDefault();let f=new FormData(e.target);await api("/api/books",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(f))});closeModal();load()}
+async function del(u){if(confirm("Hapus data ini?")){await api(u,{method:"DELETE"});load()}}
+
+function studentForm(){
+ if(me?.role!=="guru")return alert("Akses hanya untuk Guru.");
+ openModal(`<h2>👥 Buat Akun Siswa</h2><form class="form" onsubmit="saveStudent(event)">
+ <label>Nama Lengkap<input name="name" required></label>
+ <label>Username<input name="username" required minlength="3"></label>
+ <label>Password<input name="password" type="password" required minlength="6"></label>
+ <p class="muted">Siswa akan menggunakan username dan password ini untuk login dari perangkat apa pun.</p>
+ <button class="action primary">＋ Buat Akun</button></form>`);
+}
+async function saveStudent(e){
+ e.preventDefault();
+ try{
+   let f=Object.fromEntries(new FormData(e.target));
+   await api("/api/students",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(f)});
+   closeModal();load();alert("Akun siswa berhasil dibuat.");
+ }catch(x){alert(x.message)}
+}
+function editStudent(id){
+ if(me?.role!=="guru")return;
+ const s=students.find(x=>x.id===id); if(!s)return;
+ openModal(`<h2>✏️ Edit Akun Siswa</h2><form class="form" onsubmit="saveStudentEdit(event,${id})">
+ <label>Nama Lengkap<input name="name" value="${esc(s.name)}" required></label>
+ <label>Password Baru <span class="muted">(kosongkan jika tidak diganti)</span><input name="password" type="password" minlength="6"></label>
+ <button class="action primary">Simpan Perubahan</button></form>`);
+}
+async function saveStudentEdit(e,id){
+ e.preventDefault();
+ try{
+   let f=Object.fromEntries(new FormData(e.target));
+   await api("/api/students/"+id,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(f)});
+   closeModal();load();alert("Akun siswa diperbarui.");
+ }catch(x){alert(x.message)}
+}
+async function deleteStudent(id){
+ if(me?.role!=="guru")return;
+ const s=students.find(x=>x.id===id); if(!s)return;
+ if(confirm(`Hapus akun siswa "${s.name}"? Data pengumpulan tugas siswa ini juga akan dihapus.`)){
+   try{await api("/api/students/"+id,{method:"DELETE"});load()}catch(x){alert(x.message)}
+ }
+}
+
+async function profile(){let p=await api("/api/profile");openModal(`<div class="profile"><div style="text-align:center"><div class="avatar">${p.photo?`<img src="${p.photo}">`:"👤"}</div><button class="action secondary" onclick="photoForm()">📷 Ubah Foto</button></div><div><h2>Profil Saya</h2><div class="prow"><b>Nama Lengkap</b><br>${esc(p.name||"-")}</div><div class="prow"><b>Tanggal Lahir</b><br>${esc(p.birth||"-")}</div><div class="prow"><b>Alamat</b><br>${esc(p.address||"-")}</div><div class="prow"><b>Bio</b><br>${esc(p.bio||"-")}</div><button class="action primary" onclick="profileEdit()">✏️ Edit Profil</button></div></div>`)}
+function profileEdit(){openModal(`<h2>Edit Profil</h2><form class="form" onsubmit="saveProfile(event)"><label>Nama Lengkap<input name="name" value="${esc(me.name)}" required></label><label>Tanggal Lahir<input name="birth" type="date" value="${esc(me.birth||"")}"></label><label>Alamat<textarea name="address">${esc(me.address||"")}</textarea></label><label>Bio<textarea name="bio">${esc(me.bio||"")}</textarea></label><button class="action primary">Simpan</button></form>`)}
+async function saveProfile(e){e.preventDefault();let f=Object.fromEntries(new FormData(e.target));me=await api("/api/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(f)});closeModal();profile();$("welcome").textContent="Halo, "+me.name+"!"}
+function photoForm(){openModal(`<h2>Ubah Foto Profil</h2><form class="form" onsubmit="savePhoto(event)"><input name="photo" type="file" accept="image/*" required><button class="action primary">Upload Foto</button></form>`)}
+async function savePhoto(e){e.preventDefault();let r=await api("/api/profile/photo",{method:"POST",body:new FormData(e.target)});me.photo=r.photo;closeModal();profile()}
+init();
+</script></body></html>
